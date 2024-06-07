@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import getState from "./flux.js";
+import { useNavigate } from "react-router-dom";
 
 // Don't change, here is where we initialize our context, by default it's just going to be null.
 export const Context = React.createContext(null);
@@ -21,7 +22,21 @@ const injectContext = PassedComponent => {
 			})
 		);
 
+		const navigate = useNavigate();
+
+
 		useEffect(() => {
+			const token = localStorage.getItem('token');
+			if (token) {
+				setState(prevState => ({
+					...prevState,
+					store: {
+						...prevState.store,
+						isAuthenticated: true,
+						token: token
+					}
+				}));
+			}
 			/**
 			 * EDIT THIS!
 			 * This function is the equivalent to "window.onLoad", it only runs once on the entire application lifetime
@@ -30,6 +45,20 @@ const injectContext = PassedComponent => {
 			 **/
 			state.actions.getMessage(); // <---- calling this function from the flux.js actions
 		}, []);
+
+		// Add navigate to actions
+		
+		useEffect(() => {
+			if (state.actions && typeof navigate === 'function') {
+				setState(prevState => ({
+					...prevState,
+					actions: {
+						...prevState.actions,
+						navigate: navigate
+					}
+				}));
+			}
+		}, [navigate]);
 
 		// The initial value for the context is not null anymore, but the current state of this component,
 		// the context will now have a getStore, getActions and setStore functions available, because they were declared
@@ -40,6 +69,7 @@ const injectContext = PassedComponent => {
 			</Context.Provider>
 		);
 	};
+
 	return StoreWrapper;
 };
 

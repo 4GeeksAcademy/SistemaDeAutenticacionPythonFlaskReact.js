@@ -13,40 +13,97 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			token: localStorage.getItem('token') || null,
+			isAuthenticated: !!localStorage.getItem('token')
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-
 			getMessage: async () => {
-				try{
+				try {
 					// fetching data from the backend
 					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
 					const data = await resp.json()
 					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves
 					return data;
-				}catch(error){
+				} catch (error) {
 					console.log("Error loading message from backend", error)
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
+
+			login: async (email, password) => {
+				const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ email, password })
 				});
+				const data = await response.json();
+				if (response.ok) {
+					localStorage.setItem('token', data.token);
+					setStore((prevState) => ({
+						...prevState,
+						isAuthenticated: true,
+						token: data.token
+					}));
+					const navigate = getActions().navigate;
+					if (typeof navigate === 'function') {
+						navigate('/private');
+					} else {
+						console.error('Navigate is not a function');
+					}
+				} else {
+					console.log(data.msg);
+				}
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
+			logout: () => {
+				localStorage.removeItem('token');
+				setStore((prevState) => ({
+					...prevState,
+					isAuthenticated: false,
+					token: null,
+					message: null
+				}));
+			},
+
+			getPrivateMessage: async () => {
+				const token = store.token;
+				const response = await fetch(`${process.env.BACKEND_URL}/api/private`, {
+					method: 'GET',
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				});
+				const data = await response.json();
+				if (response.ok) {
+					setStore((prevState) => ({
+						...prevState,
+						message: data.msg
+					}));
+				} else {
+					console.log(data.msg);
+				}
+			},
+
+			signup: async (email, password, nombre, apellido, telefono) => {
+				const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ email, password, nombre, apellido, telefono })
+				});
+				const data = await response.json();
+				if (!response.ok) {
+					console.log(data.msg);
+				} else {
+					// alert('Usuario registrado exitosamente');
+				}
+			},
 		}
 	};
 };

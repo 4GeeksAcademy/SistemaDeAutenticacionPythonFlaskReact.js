@@ -8,8 +8,6 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
 import { Registro } from "./pages/registro";
 import Privada from "./pages/privada";
 
@@ -23,20 +21,20 @@ const Layout = () => {
 
     return (
         <div>
-            <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    {/* <Navbar /> */}
-                    <Routes>
-                        <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Registro />} path="/registro" />
-                        <Route element={<Privada />} path="/privada" />
-                        <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<h1>Not found!</h1>} />
-                    </Routes>
-                    {/* <Footer /> */}
-                </ScrollToTop>
-            </BrowserRouter>
+
+            <ScrollToTop>
+                {/* <Navbar /> */}
+                <Routes>
+                    <Route element={<Home />} path="/" />
+                    <Route element={<Demo />} path="/demo" />
+                    <Route element={<Registro />} path="/registro" />
+                    <Route element={<Privada />} path="/privada" />
+                    <Route element={<Single />} path="/single/:theid" />
+                    <Route element={<h1>Not found!</h1>} />
+                </Routes>
+                {/* <Footer /> */}
+            </ScrollToTop>
+
         </div>
     );
 };

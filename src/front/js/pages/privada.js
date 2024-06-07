@@ -8,7 +8,7 @@ const Privada = () => {
         <>
 
             <Navbar />
-            
+            <h1>hola por ahora</h1>
             <Footer />
 
         </>
