@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/logoPng.png";
@@ -8,12 +8,14 @@ import { useNavigate } from "react-router-dom";
 export const Home = () => {
 	const navigate = useNavigate();
 	const { store, actions } = useContext(Context);
+	const [password, setPassword] = useState("");
+	const [email, setEmail] = useState("");
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
 		await actions.login(email, password);
 		if (store.isAuthenticated) {
-			navigate('/private');
+			navigate('/privada');
 		}
 	};
 
@@ -26,11 +28,11 @@ export const Home = () => {
 					<h1 className="h3 mb-3 fw-normal">ingresar Usuario</h1>
 
 					<div className="form-floating">
-						<input type="email" className="form-control arriba" id="floatingInput" placeholder="name@example.com" />
+						<input type="email" className="form-control arriba" id="floatingInput" placeholder="name@example.com" value={email} onChange={(e) => (setEmail(e.target.value))} />
 						<label htmlFor="floatingInput">Email</label>
 					</div>
 					<div className="form-floating">
-						<input type="password" className="form-control abajo" id="floatingPassword" placeholder="Password" />
+						<input type="password" className="form-control abajo" id="floatingPassword" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 						<label htmlFor="floatingPassword">Password</label>
 					</div>
 					<button className="btn btn-primary w-100 py-2 mt-2 " type="submit">Ingresar</button>

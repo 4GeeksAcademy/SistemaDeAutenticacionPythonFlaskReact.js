@@ -49,18 +49,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						isAuthenticated: true,
 						token: data.token
 					}));
-					const navigate = getActions().navigate;
-					if (typeof navigate === 'function') {
-						navigate('/private');
-					} else {
-						console.error('Navigate is not a function');
-					}
 				} else {
 					console.log(data.msg);
 				}
 			},
 
 			logout: () => {
+				console.warn("entro a la funcion")
 				localStorage.removeItem('token');
 				setStore((prevState) => ({
 					...prevState,
